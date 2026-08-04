@@ -2,6 +2,8 @@
 
 Android aplikacija za upravljanje ventilatorom i RGB trakom te praćenje temperature i vlažnosti. Komunikacija ide preko Firebase Realtime Database, koju ESP32 povezuje s Arduinom.
 
+Za jednostavne upute o lokalnim datotekama i prijenosu na pločice prvo otvori `POCNI-OVDJE.md`.
+
 ## Trenutne mogućnosti
 
 - prikaz temperature i vlažnosti u stvarnom vremenu
