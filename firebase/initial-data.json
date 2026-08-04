@@ -9,6 +9,7 @@
     "brightness": 25,
     "animationSpeed": 50,
     "followFan": false,
+    "rainbow": false,
     "color": {
       "r": 53,
       "g": 211,

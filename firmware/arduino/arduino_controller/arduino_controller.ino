@@ -8,7 +8,7 @@ constexpr uint8_t DHT_PIN = 2;
 constexpr uint8_t FAN_PWM_PIN = 6;       // L298N ENA, ENA jumper removed
 constexpr uint8_t LED_DATA_PIN = 11;     // NeoPixel data input
 constexpr uint16_t LED_COUNT = 60;
-constexpr uint8_t MAX_LED_BRIGHTNESS = 25; // ~10% cap while powered from Arduino 5V
+constexpr uint8_t MAX_LED_BRIGHTNESS = 255;
 constexpr unsigned long SENSOR_INTERVAL_MS = 2000;
 
 SoftwareSerial espSerial(ESP_RX_PIN, ESP_TX_PIN);
@@ -26,6 +26,7 @@ uint8_t lightBlue = 154;
 uint8_t lightBrightness = 25;
 uint8_t animationSpeed = 50;
 bool animationFollowsFan = false;
+bool lightRainbow = false;
 
 float lastTemperature = NAN;
 unsigned long lastSensorReading = 0;
@@ -39,10 +40,10 @@ void renderLights();
 void renderSolid();
 void renderSpiral();
 void renderPulse();
-void renderRainbow();
 void renderFill();
 uint32_t wheel(uint8_t position);
 uint8_t scaled(uint8_t value, uint8_t percent);
+uint32_t selectedColor(uint16_t pixel, uint8_t strength = 100);
 
 void setup() {
   Serial.begin(115200);
@@ -67,7 +68,8 @@ void loop() {
   }
 
   uint8_t effectiveSpeed = animationFollowsFan ? map(fanPwm, 0, 255, 0, 100) : animationSpeed;
-  unsigned long frameInterval = map(constrain(effectiveSpeed, 0, 100), 0, 100, 260, 20);
+  uint8_t framesPerSecond = 4 + (constrain(effectiveSpeed, 0, 100) * 36UL / 100);
+  unsigned long frameInterval = 1000UL / framesPerSecond;
   if (millis() - lastAnimationFrame >= frameInterval) {
     lastAnimationFrame = millis();
     renderLights();
@@ -81,9 +83,9 @@ void readControlMessage() {
   message.trim();
   if (!message.startsWith("CONTROL,")) return;
 
-  int values[10];
+  int values[11];
   int start = message.indexOf(',') + 1;
-  for (uint8_t i = 0; i < 10; i++) {
+  for (uint8_t i = 0; i < 11; i++) {
     int end = message.indexOf(',', start);
     if (end < 0) end = message.length();
     if (start <= 0 || start >= static_cast<int>(message.length())) return;
@@ -101,6 +103,7 @@ void readControlMessage() {
   lightBrightness = constrain(values[7], 0, 100);
   animationSpeed = constrain(values[8], 0, 100);
   animationFollowsFan = values[9] == 1;
+  lightRainbow = values[10] == 1;
 
   updateFanOutput();
 }
@@ -157,8 +160,7 @@ void renderLights() {
   switch (lightMode) {
     case 1: renderSpiral(); break;
     case 2: renderPulse(); break;
-    case 3: renderRainbow(); break;
-    case 4: renderFill(); break;
+    case 3: renderFill(); break;
     default: renderSolid();
   }
   strip.show();
@@ -166,7 +168,9 @@ void renderLights() {
 }
 
 void renderSolid() {
-  strip.fill(strip.Color(lightRed, lightGreen, lightBlue));
+  for (uint16_t pixel = 0; pixel < LED_COUNT; pixel++) {
+    strip.setPixelColor(pixel, selectedColor(pixel));
+  }
 }
 
 void renderSpiral() {
@@ -176,34 +180,42 @@ void renderSpiral() {
 
   for (uint8_t offset = 0; offset < segmentLength; offset++) {
     uint16_t pixel = (head + LED_COUNT - offset) % LED_COUNT;
-    strip.setPixelColor(pixel, strip.Color(lightRed, lightGreen, lightBlue));
+    strip.setPixelColor(pixel, selectedColor(pixel));
   }
 }
 
 void renderFill() {
   strip.clear();
-  uint8_t litCount = animationStep % (LED_COUNT + 1);
-  uint32_t color = strip.Color(lightRed, lightGreen, lightBlue);
+  uint8_t phase = animationStep % (LED_COUNT + 8);
+  uint8_t litCount = phase <= LED_COUNT ? phase : (phase <= LED_COUNT + 4 ? LED_COUNT : 0);
   for (uint8_t pixel = 0; pixel < litCount; pixel++) {
-    strip.setPixelColor(pixel, color);
+    strip.setPixelColor(pixel, selectedColor(pixel));
   }
 }
 
 void renderPulse() {
   uint8_t phase = animationStep % 200;
   uint8_t strength = phase <= 100 ? map(phase, 0, 100, 12, 100) : map(phase, 101, 199, 100, 12);
-  strip.fill(strip.Color(
+  for (uint16_t pixel = 0; pixel < LED_COUNT; pixel++) {
+    strip.setPixelColor(pixel, selectedColor(pixel, strength));
+  }
+}
+
+uint32_t selectedColor(uint16_t pixel, uint8_t strength) {
+  if (lightRainbow) {
+    uint8_t position = (pixel * 256UL / LED_COUNT + animationStep) & 255;
+    uint32_t color = wheel(position);
+    return strip.Color(
+      scaled((color >> 16) & 0xFF, strength),
+      scaled((color >> 8) & 0xFF, strength),
+      scaled(color & 0xFF, strength)
+    );
+  }
+  return strip.Color(
     scaled(lightRed, strength),
     scaled(lightGreen, strength),
     scaled(lightBlue, strength)
-  ));
-}
-
-void renderRainbow() {
-  for (uint16_t pixel = 0; pixel < LED_COUNT; pixel++) {
-    uint8_t position = (pixel * 256 / LED_COUNT + animationStep) & 255;
-    strip.setPixelColor(pixel, wheel(position));
-  }
+  );
 }
 
 uint32_t wheel(uint8_t position) {

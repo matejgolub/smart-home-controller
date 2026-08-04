@@ -33,6 +33,10 @@
         ".write": "auth != null",
         ".validate": "newData.isBoolean()"
       },
+      "rainbow": {
+        ".write": "auth != null",
+        ".validate": "newData.isBoolean()"
+      },
       "color": {
         "$channel": {
           ".write": "auth != null",

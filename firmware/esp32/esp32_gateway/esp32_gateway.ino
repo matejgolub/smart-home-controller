@@ -31,6 +31,7 @@ uint8_t lightBlue = 154;
 uint8_t lightBrightness = 25;
 uint8_t animationSpeed = 50;
 bool animationFollowsFan = false;
+bool lightRainbow = false;
 unsigned long lastControlRead = 0;
 
 void connectWiFi();
@@ -108,13 +109,14 @@ void readAndSendControls() {
   fanMode = readInt(root, "fan/mode", fanMode, 0, 5);
   fanManualSpeed = readInt(root, "fan/manualSpeed", fanManualSpeed, 0, 100);
   lightOn = readBool(root, "light/turn", lightOn);
-  lightMode = readInt(root, "light/mode", lightMode, 0, 4);
+  lightMode = readInt(root, "light/mode", lightMode, 0, 3);
   lightRed = readInt(root, "light/color/r", lightRed, 0, 255);
   lightGreen = readInt(root, "light/color/g", lightGreen, 0, 255);
   lightBlue = readInt(root, "light/color/b", lightBlue, 0, 255);
   lightBrightness = readInt(root, "light/brightness", lightBrightness, 0, 100);
   animationSpeed = readInt(root, "light/animationSpeed", animationSpeed, 0, 100);
   animationFollowsFan = readBool(root, "light/followFan", animationFollowsFan);
+  lightRainbow = readBool(root, "light/rainbow", lightRainbow);
 
   Serial1.print(F("CONTROL,"));
   Serial1.print(fanMode);
@@ -135,7 +137,9 @@ void readAndSendControls() {
   Serial1.print(',');
   Serial1.print(animationSpeed);
   Serial1.print(',');
-  Serial1.println(animationFollowsFan ? 1 : 0);
+  Serial1.print(animationFollowsFan ? 1 : 0);
+  Serial1.print(',');
+  Serial1.println(lightRainbow ? 1 : 0);
 }
 
 int readInt(FirebaseJson *json, const char *path, int fallback, int minimum, int maximum) {

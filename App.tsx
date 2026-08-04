@@ -17,7 +17,7 @@ import { onValue, ref, update } from 'firebase/database';
 import { database, firebaseConfigurationError } from './src/firebase';
 
 type FanMode = 0 | 1 | 2 | 3 | 4 | 5;
-type LightMode = 0 | 1 | 2 | 3 | 4;
+type LightMode = 0 | 1 | 2 | 3;
 type RgbColor = { r: number; g: number; b: number };
 
 type HomeState = {
@@ -28,6 +28,7 @@ type HomeState = {
   brightness: number;
   animationSpeed: number;
   followFan: boolean;
+  rainbowColor: boolean;
   color: RgbColor;
   temperature: number | null;
   humidity: number | null;
@@ -41,6 +42,7 @@ const initialState: HomeState = {
   brightness: 25,
   animationSpeed: 50,
   followFan: false,
+  rainbowColor: false,
   color: { r: 53, g: 211, b: 154 },
   temperature: null,
   humidity: null,
@@ -58,8 +60,7 @@ const lightModes: { value: LightMode; label: string; detail: string }[] = [
   { value: 0, label: 'Stalna boja', detail: 'Sve LED diode jednako' },
   { value: 1, label: 'Spirala', detail: 'Trećina trake kruži u istoj boji' },
   { value: 2, label: 'Pulsiranje', detail: 'Lagano pojačavanje i smanjivanje' },
-  { value: 3, label: 'Duga', detail: 'Promjena cijelog spektra boja' },
-  { value: 4, label: 'Punjenje', detail: 'LED diode ostaju upaljene do kraja' },
+  { value: 3, label: 'Punjenje', detail: 'LED diode ostaju upaljene do resetiranja' },
 ];
 
 const colorPresets: RgbColor[] = [
@@ -102,7 +103,7 @@ export default function App() {
       (snapshot) => {
         const value = snapshot.val() ?? {};
         const rawFanMode = clamp(value.fan?.mode, 0, 0, 5);
-        const rawLightMode = clamp(value.light?.mode, 0, 0, 4);
+        const rawLightMode = clamp(value.light?.mode, 0, 0, 3);
         setHome({
           fanMode: rawFanMode as FanMode,
           fanManualSpeed: clamp(value.fan?.manualSpeed, 50),
@@ -111,6 +112,7 @@ export default function App() {
           brightness: clamp(value.light?.brightness, 25),
           animationSpeed: clamp(value.light?.animationSpeed, 50),
           followFan: Boolean(value.light?.followFan),
+          rainbowColor: Boolean(value.light?.rainbow),
           color: {
             r: clamp(value.light?.color?.r, 53, 0, 255),
             g: clamp(value.light?.color?.g, 211, 0, 255),
@@ -190,11 +192,16 @@ export default function App() {
   }
 
   async function updateColor(color: RgbColor) {
-    setLocal('color', color);
+    setHome((current) => ({ ...current, color, rainbowColor: false }));
     await writeValues(
-      { 'light/color/r': color.r, 'light/color/g': color.g, 'light/color/b': color.b },
+      { 'light/color/r': color.r, 'light/color/g': color.g, 'light/color/b': color.b, 'light/rainbow': false },
       'Boja nije spremljena.',
     );
+  }
+
+  async function selectRainbowColor() {
+    setLocal('rainbowColor', true);
+    await writeValues({ 'light/rainbow': true }, 'Dugina boja nije spremljena.');
   }
 
   return (
@@ -317,6 +324,12 @@ export default function App() {
             <View style={[styles.colorValue, { backgroundColor: colorCss(home.color) }]} />
           </View>
           <View style={styles.palette}>
+            <Pressable
+              onPress={selectRainbowColor}
+              style={({ pressed }) => [styles.swatch, styles.rainbowSwatch, home.rainbowColor && styles.selectedSwatch, pressed && styles.pressed]}
+            >
+              <Text style={styles.rainbowText}>🌈</Text>
+            </Pressable>
             {colorPresets.map((color) => (
               <Pressable
                 key={`${color.r}-${color.g}-${color.b}`}
@@ -370,7 +383,7 @@ export default function App() {
               trackColor={{ false: '#384458', true: '#9B7BFF' }}
             />
           </View>
-          <Text style={styles.safetyNote}>Firmware je privremeno ograničen na 25% fizičke svjetline dok traka nema zasebno 5 V napajanje.</Text>
+          <Text style={styles.safetyNote}>Puni intenzitet koristi samo sa zasebnim stabiliziranim 5 V napajanjem za LED traku i zajedničkim GND-om.</Text>
         </View>
 
         <Text style={styles.footer}>Firebase ↔ ESP32 ↔ Arduino UNO</Text>
@@ -480,6 +493,9 @@ const styles = StyleSheet.create({
   colorValue: { width: 34, height: 34, borderRadius: 10, borderColor: '#FFFFFF33', borderWidth: 2 },
   palette: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginVertical: 8 },
   swatch: { width: 32, height: 32, borderRadius: 10, borderWidth: 2, borderColor: '#FFFFFF26' },
+  rainbowSwatch: { backgroundColor: '#6451A8', alignItems: 'center', justifyContent: 'center' },
+  selectedSwatch: { borderColor: '#FFFFFF', borderWidth: 3 },
+  rainbowText: { fontSize: 17 },
   switchRow: { flexDirection: 'row', alignItems: 'center', marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#223047' },
   switchCopy: { flex: 1, paddingRight: 10 },
   switchTitle: { color: '#E8ECF3', fontSize: 13, fontWeight: '700' },
