@@ -2,6 +2,8 @@
 
 Ovdje su očišćene i dorađene kopije Arduino i ESP32 programa. Originalne datoteke nisu mijenjane.
 
+Potrebne vanjske biblioteke nalaze se u lokalnoj mapi `libraries`. Postavi ovaj `firmware` folder kao Arduino IDE **Sketchbook location** kako bi ih IDE automatski pronašao.
+
 ## Prije prijenosa na uređaje
 
 1. U `firmware/esp32/esp32_gateway` otvori lokalni `config.h` i unesi stvarne vrijednosti.

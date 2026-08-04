@@ -6,6 +6,16 @@ Ovo je jedina radna mapa cijelog projekta:
 
 U njoj su mobilna aplikacija, Arduino UNO program, ESP32 program, Firebase pravila i dokumentacija. Kada se nešto promijeni, Codex će mijenjati datoteke u ovoj mapi i spremiti iste promjene na privatni GitHub.
 
+## Prvo postavljanje Arduino IDE-a
+
+U Arduino IDE-u otvori **File → Preferences** i kao **Sketchbook location** postavi:
+
+`C:\Users\matej\Documents\Codex\2026-08-04\v\outputs\smart-home-controller\firmware`
+
+Nakon toga ponovno pokreni Arduino IDE. Tako će automatski pronaći potrebne biblioteke iz `firmware\libraries`.
+
+Za ESP32 u **Tools → Board → Boards Manager** mora biti instaliran Espressifov paket ESP32 pločica. Arduino UNO podrška obično dolazi s Arduino IDE-om.
+
 ## Što se prenosi na koji uređaj
 
 ### Arduino UNO
