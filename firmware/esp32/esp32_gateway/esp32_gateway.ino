@@ -1,3 +1,14 @@
+#define DISABLE_ERROR_QUEUE
+#define DISABLE_ERROR_STRING
+#define DISABLE_FCM
+#define DISABLE_PSRAM
+#define DISABLE_NPT_TIME
+#define DISABLE_OTA
+#define DISABLE_KEEP_ALIVE
+#define DISABLE_SD
+#define DISABLE_FLASH
+#define DISABLE_DEBUG
+
 #include <FirebaseESP32.h>
 #include <WiFi.h>
 #include "config.h"
@@ -83,15 +94,13 @@ void readSensorMessage() {
   sensor.set("temperature", temperature);
   sensor.set("humidity", humidity);
   if (!Firebase.updateNode(firebaseData, "/sensor", sensor)) {
-    Serial.print(F("Senzori nisu spremljeni: "));
-    Serial.println(firebaseData.errorReason());
+    Serial.println(F("Firebase: slanje senzora nije uspjelo"));
   }
 }
 
 void readAndSendControls() {
   if (!Firebase.getJSON(firebaseData, "/")) {
-    Serial.print(F("Kontrole nisu procitane: "));
-    Serial.println(firebaseData.errorReason());
+    Serial.println(F("Firebase: citanje kontrola nije uspjelo"));
     return;
   }
 

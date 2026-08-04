@@ -46,6 +46,8 @@ U Arduino IDE-u otvori:
 
 U istom folderu mora postojati lokalna datoteka `config.h` s Wi-Fi podacima i Firebase tokenom. Ona se namjerno ne šalje na GitHub. Odaberi svoj ESP32 model, odgovarajući COM port i klikni **Upload**.
 
+Ako Arduino IDE javi `Sketch too big`, u izborniku **Tools → Partition Scheme** odaberi **Huge APP (3MB No OTA/1MB SPIFFS)**. Ako taj točan naziv nije ponuđen, odaberi varijantu **No OTA** s najvećim APP prostorom. Ovaj projekt ne koristi OTA ažuriranje pa je takva particija prikladna.
+
 Lokalni `config.h` već je pripremljen iz originalnog ESP32 programa. Ako promijeniš Wi-Fi mrežu ili Firebase token, mijenja se samo ta lokalna datoteka.
 
 ### Mobilna aplikacija
