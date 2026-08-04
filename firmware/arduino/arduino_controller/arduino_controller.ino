@@ -40,6 +40,7 @@ void renderSolid();
 void renderSpiral();
 void renderPulse();
 void renderRainbow();
+void renderFill();
 uint32_t wheel(uint8_t position);
 uint8_t scaled(uint8_t value, uint8_t percent);
 
@@ -157,6 +158,7 @@ void renderLights() {
     case 1: renderSpiral(); break;
     case 2: renderPulse(); break;
     case 3: renderRainbow(); break;
+    case 4: renderFill(); break;
     default: renderSolid();
   }
   strip.show();
@@ -169,17 +171,21 @@ void renderSolid() {
 
 void renderSpiral() {
   strip.clear();
-  const uint8_t tailLength = 10;
+  const uint8_t segmentLength = LED_COUNT / 3;
   uint16_t head = animationStep % LED_COUNT;
 
-  for (uint8_t tail = 0; tail < tailLength; tail++) {
-    uint16_t pixel = (head + LED_COUNT - tail) % LED_COUNT;
-    uint8_t strength = map(tail, 0, tailLength - 1, 100, 8);
-    strip.setPixelColor(pixel, strip.Color(
-      scaled(lightRed, strength),
-      scaled(lightGreen, strength),
-      scaled(lightBlue, strength)
-    ));
+  for (uint8_t offset = 0; offset < segmentLength; offset++) {
+    uint16_t pixel = (head + LED_COUNT - offset) % LED_COUNT;
+    strip.setPixelColor(pixel, strip.Color(lightRed, lightGreen, lightBlue));
+  }
+}
+
+void renderFill() {
+  strip.clear();
+  uint8_t litCount = animationStep % (LED_COUNT + 1);
+  uint32_t color = strip.Color(lightRed, lightGreen, lightBlue);
+  for (uint8_t pixel = 0; pixel < litCount; pixel++) {
+    strip.setPixelColor(pixel, color);
   }
 }
 

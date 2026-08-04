@@ -108,7 +108,7 @@ void readAndSendControls() {
   fanMode = readInt(root, "fan/mode", fanMode, 0, 5);
   fanManualSpeed = readInt(root, "fan/manualSpeed", fanManualSpeed, 0, 100);
   lightOn = readBool(root, "light/turn", lightOn);
-  lightMode = readInt(root, "light/mode", lightMode, 0, 3);
+  lightMode = readInt(root, "light/mode", lightMode, 0, 4);
   lightRed = readInt(root, "light/color/r", lightRed, 0, 255);
   lightGreen = readInt(root, "light/color/g", lightGreen, 0, 255);
   lightBlue = readInt(root, "light/color/b", lightBlue, 0, 255);

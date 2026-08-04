@@ -17,7 +17,7 @@ import { onValue, ref, update } from 'firebase/database';
 import { database, firebaseConfigurationError } from './src/firebase';
 
 type FanMode = 0 | 1 | 2 | 3 | 4 | 5;
-type LightMode = 0 | 1 | 2 | 3;
+type LightMode = 0 | 1 | 2 | 3 | 4;
 type RgbColor = { r: number; g: number; b: number };
 
 type HomeState = {
@@ -56,9 +56,10 @@ const fanModes: { value: Exclude<FanMode, 5>; label: string; detail: string }[] 
 
 const lightModes: { value: LightMode; label: string; detail: string }[] = [
   { value: 0, label: 'Stalna boja', detail: 'Sve LED diode jednako' },
-  { value: 1, label: 'Spirala', detail: 'Boja kruži duž trake' },
+  { value: 1, label: 'Spirala', detail: 'Trećina trake kruži u istoj boji' },
   { value: 2, label: 'Pulsiranje', detail: 'Lagano pojačavanje i smanjivanje' },
   { value: 3, label: 'Duga', detail: 'Promjena cijelog spektra boja' },
+  { value: 4, label: 'Punjenje', detail: 'LED diode ostaju upaljene do kraja' },
 ];
 
 const colorPresets: RgbColor[] = [
@@ -101,7 +102,7 @@ export default function App() {
       (snapshot) => {
         const value = snapshot.val() ?? {};
         const rawFanMode = clamp(value.fan?.mode, 0, 0, 5);
-        const rawLightMode = clamp(value.light?.mode, 0, 0, 3);
+        const rawLightMode = clamp(value.light?.mode, 0, 0, 4);
         setHome({
           fanMode: rawFanMode as FanMode,
           fanManualSpeed: clamp(value.fan?.manualSpeed, 50),
