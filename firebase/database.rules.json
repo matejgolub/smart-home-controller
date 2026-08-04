@@ -1,0 +1,29 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    "fan": {
+      "mode": {
+        ".write": "auth != null",
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 4"
+      }
+    },
+    "light": {
+      "turn": {
+        ".write": "auth != null",
+        ".validate": "newData.isBoolean()"
+      }
+    },
+    "sensor": {
+      ".write": "auth != null",
+      "temperature": {
+        ".validate": "newData.isNumber() && newData.val() >= -40 && newData.val() <= 80"
+      },
+      "humidity": {
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+      }
+    },
+    "$other": {
+      ".validate": false
+    }
+  }
+}
