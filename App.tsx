@@ -323,13 +323,15 @@ export default function App() {
             <Text style={styles.cardTitle}>Odabrana boja</Text>
             <View style={[styles.colorValue, { backgroundColor: colorCss(home.color) }]} />
           </View>
+          <Pressable
+            onPress={selectRainbowColor}
+            style={({ pressed }) => [styles.rainbowButton, home.rainbowColor && styles.selectedRainbowButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.rainbowText}>🌈</Text>
+            <Text style={styles.rainbowLabel}>Dugina boja</Text>
+            {home.rainbowColor ? <Text style={styles.check}>✓</Text> : null}
+          </Pressable>
           <View style={styles.palette}>
-            <Pressable
-              onPress={selectRainbowColor}
-              style={({ pressed }) => [styles.swatch, styles.rainbowSwatch, home.rainbowColor && styles.selectedSwatch, pressed && styles.pressed]}
-            >
-              <Text style={styles.rainbowText}>🌈</Text>
-            </Pressable>
             {colorPresets.map((color) => (
               <Pressable
                 key={`${color.r}-${color.g}-${color.b}`}
@@ -493,9 +495,10 @@ const styles = StyleSheet.create({
   colorValue: { width: 34, height: 34, borderRadius: 10, borderColor: '#FFFFFF33', borderWidth: 2 },
   palette: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginVertical: 8 },
   swatch: { width: 32, height: 32, borderRadius: 10, borderWidth: 2, borderColor: '#FFFFFF26' },
-  rainbowSwatch: { backgroundColor: '#6451A8', alignItems: 'center', justifyContent: 'center' },
-  selectedSwatch: { borderColor: '#FFFFFF', borderWidth: 3 },
-  rainbowText: { fontSize: 17 },
+  rainbowButton: { minHeight: 42, borderRadius: 12, marginTop: 6, paddingHorizontal: 12, backgroundColor: '#342D62', borderColor: '#6655A8', borderWidth: 1, flexDirection: 'row', alignItems: 'center' },
+  selectedRainbowButton: { backgroundColor: '#4B3D86', borderColor: '#B7A7FF', borderWidth: 2 },
+  rainbowText: { fontSize: 18, marginRight: 9 },
+  rainbowLabel: { color: '#F1EEFF', fontSize: 13, fontWeight: '800', flex: 1 },
   switchRow: { flexDirection: 'row', alignItems: 'center', marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#223047' },
   switchCopy: { flex: 1, paddingRight: 10 },
   switchTitle: { color: '#E8ECF3', fontSize: 13, fontWeight: '700' },
