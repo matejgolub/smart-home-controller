@@ -8,7 +8,11 @@ Za jednostavne upute o lokalnim datotekama i prijenosu na pločice prvo otvori `
 
 - prikaz temperature i vlažnosti u stvarnom vremenu
 - pet stanja ventilatora: isključeno, tiho, srednje, jako i automatski
-- uključivanje i isključivanje RGB trake
+- ručno podešavanje brzine ventilatora sliderom
+- uključivanje i isključivanje NeoPixel trake od 60 LED dioda
+- odabir RGB boje, intenziteta i brzine animacije
+- stalna boja, spirala, pulsiranje i rainbow način rasvjete
+- opcionalno praćenje brzine ventilatora za brzinu animacije
 - prikaz veze s Firebase bazom
 - optimističko ažuriranje sučelja i vraćanje prethodne vrijednosti ako zapis ne uspije
 
@@ -27,13 +31,20 @@ Firebase web konfiguracija nije administratorska tajna, ali `.env` se svejedno n
 
 ```json
 {
-  "fan": { "mode": 0 },
-  "light": { "turn": false },
+  "fan": { "mode": 0, "manualSpeed": 50 },
+  "light": {
+    "turn": false,
+    "mode": 0,
+    "brightness": 25,
+    "animationSpeed": 50,
+    "followFan": false,
+    "color": { "r": 53, "g": 211, "b": 154 }
+  },
   "sensor": { "humidity": 55, "temperature": 27.7 }
 }
 ```
 
-Vrijednost `fan/mode` mora biti cijeli broj od 0 do 4, a `light/turn` Boolean vrijednost.
+Vrijednost `fan/mode` mora biti cijeli broj od 0 do 5. Vrijednost 5 označava ručni slider. Modovi rasvjete 0–3 označavaju stalnu boju, spiralu, pulsiranje i dugu.
 
 ## Sigurnost
 

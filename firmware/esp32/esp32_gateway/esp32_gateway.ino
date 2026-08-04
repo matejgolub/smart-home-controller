@@ -4,19 +4,29 @@
 
 constexpr uint8_t ARDUINO_RX_PIN = 4;
 constexpr uint8_t ARDUINO_TX_PIN = 5;
-constexpr unsigned long CONTROL_INTERVAL_MS = 500;
+constexpr unsigned long CONTROL_INTERVAL_MS = 750;
 
 FirebaseData firebaseData;
 FirebaseAuth firebaseAuth;
 FirebaseConfig firebaseConfig;
 
 uint8_t fanMode = 0;
+uint8_t fanManualSpeed = 50;
 bool lightOn = false;
+uint8_t lightMode = 0;
+uint8_t lightRed = 53;
+uint8_t lightGreen = 211;
+uint8_t lightBlue = 154;
+uint8_t lightBrightness = 25;
+uint8_t animationSpeed = 50;
+bool animationFollowsFan = false;
 unsigned long lastControlRead = 0;
 
 void connectWiFi();
 void readSensorMessage();
 void readAndSendControls();
+int readInt(FirebaseJson *json, const char *path, int fallback, int minimum, int maximum);
+bool readBool(FirebaseJson *json, const char *path, bool fallback);
 
 void setup() {
   Serial.begin(115200);
@@ -69,35 +79,64 @@ void readSensorMessage() {
   float temperature = message.substring(firstComma + 1, secondComma).toFloat();
   float humidity = message.substring(secondComma + 1).toFloat();
 
-  if (!Firebase.setFloat(firebaseData, "/sensor/temperature", temperature)) {
-    Serial.print(F("Temperatura nije spremljena: "));
-    Serial.println(firebaseData.errorReason());
-  }
-
-  if (!Firebase.setFloat(firebaseData, "/sensor/humidity", humidity)) {
-    Serial.print(F("Vlaznost nije spremljena: "));
+  FirebaseJson sensor;
+  sensor.set("temperature", temperature);
+  sensor.set("humidity", humidity);
+  if (!Firebase.updateNode(firebaseData, "/sensor", sensor)) {
+    Serial.print(F("Senzori nisu spremljeni: "));
     Serial.println(firebaseData.errorReason());
   }
 }
 
 void readAndSendControls() {
-  if (Firebase.getInt(firebaseData, "/fan/mode")) {
-    int value = firebaseData.intData();
-    fanMode = static_cast<uint8_t>(constrain(value, 0, 4));
-  } else {
-    Serial.print(F("Fan mode nije procitan: "));
+  if (!Firebase.getJSON(firebaseData, "/")) {
+    Serial.print(F("Kontrole nisu procitane: "));
     Serial.println(firebaseData.errorReason());
+    return;
   }
 
-  if (Firebase.getBool(firebaseData, "/light/turn")) {
-    lightOn = firebaseData.boolData();
-  } else {
-    Serial.print(F("Svjetlo nije procitano: "));
-    Serial.println(firebaseData.errorReason());
-  }
+  FirebaseJson *root = firebaseData.jsonObjectPtr();
+  fanMode = readInt(root, "fan/mode", fanMode, 0, 5);
+  fanManualSpeed = readInt(root, "fan/manualSpeed", fanManualSpeed, 0, 100);
+  lightOn = readBool(root, "light/turn", lightOn);
+  lightMode = readInt(root, "light/mode", lightMode, 0, 3);
+  lightRed = readInt(root, "light/color/r", lightRed, 0, 255);
+  lightGreen = readInt(root, "light/color/g", lightGreen, 0, 255);
+  lightBlue = readInt(root, "light/color/b", lightBlue, 0, 255);
+  lightBrightness = readInt(root, "light/brightness", lightBrightness, 0, 100);
+  animationSpeed = readInt(root, "light/animationSpeed", animationSpeed, 0, 100);
+  animationFollowsFan = readBool(root, "light/followFan", animationFollowsFan);
 
   Serial1.print(F("CONTROL,"));
   Serial1.print(fanMode);
   Serial1.print(',');
-  Serial1.println(lightOn ? 1 : 0);
+  Serial1.print(fanManualSpeed);
+  Serial1.print(',');
+  Serial1.print(lightOn ? 1 : 0);
+  Serial1.print(',');
+  Serial1.print(lightMode);
+  Serial1.print(',');
+  Serial1.print(lightRed);
+  Serial1.print(',');
+  Serial1.print(lightGreen);
+  Serial1.print(',');
+  Serial1.print(lightBlue);
+  Serial1.print(',');
+  Serial1.print(lightBrightness);
+  Serial1.print(',');
+  Serial1.print(animationSpeed);
+  Serial1.print(',');
+  Serial1.println(animationFollowsFan ? 1 : 0);
+}
+
+int readInt(FirebaseJson *json, const char *path, int fallback, int minimum, int maximum) {
+  FirebaseJsonData result;
+  if (!json || !json->get(result, path) || !result.success) return fallback;
+  return constrain(result.intValue, minimum, maximum);
+}
+
+bool readBool(FirebaseJson *json, const char *path, bool fallback) {
+  FirebaseJsonData result;
+  if (!json || !json->get(result, path) || !result.success) return fallback;
+  return result.boolValue;
 }

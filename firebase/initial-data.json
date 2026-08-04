@@ -1,0 +1,22 @@
+{
+  "fan": {
+    "mode": 0,
+    "manualSpeed": 50
+  },
+  "light": {
+    "turn": false,
+    "mode": 0,
+    "brightness": 25,
+    "animationSpeed": 50,
+    "followFan": false,
+    "color": {
+      "r": 53,
+      "g": 211,
+      "b": 154
+    }
+  },
+  "sensor": {
+    "temperature": 27.7,
+    "humidity": 55
+  }
+}

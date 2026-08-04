@@ -26,6 +26,18 @@ U Arduino IDE-u otvori:
 
 Odaberi pločicu Arduino Uno, odgovarajući COM port i klikni **Upload**.
 
+Trenutačni Arduino UNO spojevi:
+
+- DHT11 podatkovni pin → Arduino pin 2
+- ESP32 komunikacija → Arduino pinovi 4 i 5
+- L298N ENA → Arduino PWM pin 6, uz uklonjen ENA jumper
+- L298N IN1 → 5 V, IN2 → GND, motor → OUT1 i OUT2
+- NeoPixel podatkovni ulaz → Arduino pin 11
+- NeoPixel GND → zajednički GND
+- NeoPixel +5 V → zasebno stabilizirano 5 V napajanje za normalnu uporabu
+
+Firmware podržava 60 LED dioda. Dok je traka spojena na Arduino 5 V pin, fizička svjetlina je ograničena na približno 10%. Za puni raspon intenziteta potrebno je zasebno 5 V napajanje dovoljne struje, zajednički GND, kondenzator 500–1000 µF između +5 V i GND te otpornik 300–500 Ω na podatkovnom vodu prije prve LED diode.
+
 ### ESP32
 
 U Arduino IDE-u otvori:
@@ -33,6 +45,8 @@ U Arduino IDE-u otvori:
 `firmware\esp32\esp32_gateway\esp32_gateway.ino`
 
 U istom folderu mora postojati lokalna datoteka `config.h` s Wi-Fi podacima i Firebase tokenom. Ona se namjerno ne šalje na GitHub. Odaberi svoj ESP32 model, odgovarajući COM port i klikni **Upload**.
+
+Lokalni `config.h` već je pripremljen iz originalnog ESP32 programa. Ako promijeniš Wi-Fi mrežu ili Firebase token, mijenja se samo ta lokalna datoteka.
 
 ### Mobilna aplikacija
 

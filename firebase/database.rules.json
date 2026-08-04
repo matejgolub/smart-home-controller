@@ -4,14 +4,42 @@
     "fan": {
       "mode": {
         ".write": "auth != null",
-        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 4"
-      }
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 5"
+      },
+      "manualSpeed": {
+        ".write": "auth != null",
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+      },
+      "$other": { ".validate": false }
     },
     "light": {
       "turn": {
         ".write": "auth != null",
         ".validate": "newData.isBoolean()"
-      }
+      },
+      "mode": {
+        ".write": "auth != null",
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3"
+      },
+      "brightness": {
+        ".write": "auth != null",
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+      },
+      "animationSpeed": {
+        ".write": "auth != null",
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+      },
+      "followFan": {
+        ".write": "auth != null",
+        ".validate": "newData.isBoolean()"
+      },
+      "color": {
+        "$channel": {
+          ".write": "auth != null",
+          ".validate": "$channel.matches(/^(r|g|b)$/) && newData.isNumber() && newData.val() >= 0 && newData.val() <= 255"
+        }
+      },
+      "$other": { ".validate": false }
     },
     "sensor": {
       ".write": "auth != null",
@@ -20,10 +48,9 @@
       },
       "humidity": {
         ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
-      }
+      },
+      "$other": { ".validate": false }
     },
-    "$other": {
-      ".validate": false
-    }
+    "$other": { ".validate": false }
   }
 }
