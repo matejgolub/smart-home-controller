@@ -44,7 +44,7 @@ Firebase web konfiguracija nije administratorska tajna, ali `.env` se svejedno n
 }
 ```
 
-Vrijednost `fan/mode` mora biti cijeli broj od 0 do 5. Vrijednost 5 označava ručni slider. Modovi rasvjete 0–3 označavaju stalnu boju, spiralu, pulsiranje i dugu.
+Vrijednost `fan/mode` mora biti cijeli broj od 0 do 5. Vrijednost 5 označava ručni slider. Modovi rasvjete 0–3 označavaju stalnu boju, spiralu, pulsiranje i punjenje. Dugina boja može se kombinirati sa svakim načinom rasvjete.
 
 ## Sigurnost
 

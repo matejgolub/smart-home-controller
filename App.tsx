@@ -385,7 +385,6 @@ export default function App() {
               trackColor={{ false: '#384458', true: '#9B7BFF' }}
             />
           </View>
-          <Text style={styles.safetyNote}>Puni intenzitet koristi samo sa zasebnim stabiliziranim 5 V napajanjem za LED traku i zajedničkim GND-om.</Text>
         </View>
 
         <Text style={styles.footer}>Firebase ↔ ESP32 ↔ Arduino UNO</Text>
@@ -503,6 +502,5 @@ const styles = StyleSheet.create({
   switchCopy: { flex: 1, paddingRight: 10 },
   switchTitle: { color: '#E8ECF3', fontSize: 13, fontWeight: '700' },
   switchDetail: { color: '#758196', fontSize: 10, marginTop: 3 },
-  safetyNote: { color: '#D6B469', backgroundColor: '#332C1B', borderRadius: 10, padding: 10, fontSize: 10, lineHeight: 15, marginTop: 14 },
   footer: { color: '#5D697C', fontSize: 10, textAlign: 'center', marginTop: 6 },
 });

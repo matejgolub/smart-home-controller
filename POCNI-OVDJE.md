@@ -36,7 +36,7 @@ Trenutačni Arduino UNO spojevi:
 - NeoPixel GND → zajednički GND
 - NeoPixel +5 V → zasebno stabilizirano 5 V napajanje za normalnu uporabu
 
-Firmware podržava 60 LED dioda. Dok je traka spojena na Arduino 5 V pin, fizička svjetlina je ograničena na približno 10%. Za puni raspon intenziteta potrebno je zasebno 5 V napajanje dovoljne struje, zajednički GND, kondenzator 500–1000 µF između +5 V i GND te otpornik 300–500 Ω na podatkovnom vodu prije prve LED diode.
+Firmware podržava svih 60 LED dioda i cijeli raspon intenziteta od 0 do 100%.
 
 ### ESP32
 
