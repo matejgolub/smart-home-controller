@@ -1,16 +1,10 @@
 # Počni ovdje
 
-Ovo je jedina radna mapa cijelog projekta:
-
-`C:\Users\matej\Documents\Codex\2026-08-04\v\outputs\smart-home-controller`
-
-U njoj su mobilna aplikacija, Arduino UNO program, ESP32 program, Firebase pravila i dokumentacija. Kada se nešto promijeni, Codex će mijenjati datoteke u ovoj mapi i spremiti iste promjene na privatni GitHub.
+Ovo je glavna radna mapa cijelog projekta. U njoj su mobilna aplikacija, Arduino UNO program, ESP32 program, Firebase pravila i dokumentacija. Kada se nešto promijeni, potrebno je mijenjati datoteke u toj mapi i iste promjene spremiti na GitHub.
 
 ## Prvo postavljanje Arduino IDE-a
 
-U Arduino IDE-u otvori **File → Preferences** i kao **Sketchbook location** postavi:
-
-`C:\Users\matej\Documents\Codex\2026-08-04\v\outputs\smart-home-controller\firmware`
+U Arduino IDE-u otvori **File → Preferences** i kao **Sketchbook location** odaberi mapu `firmware` unutar lokalno preuzetog projekta.
 
 Nakon toga ponovno pokreni Arduino IDE. Tako će automatski pronaći potrebne biblioteke iz `firmware\libraries`.
 
@@ -75,4 +69,4 @@ Codex će uvijek napisati jednu od ovih uputa:
 - **ESP32 promjena** – prenesi `esp32_gateway.ino` na ESP32.
 - **Promjena komunikacije** – prenesi oba programa, prvo Arduino pa ESP32.
 
-Nemoj koristiti stare programe iz `C:\Users\matej\Documents\Arduino` za buduće izmjene. Oni ostaju samo kao originalna sigurnosna kopija. Radna verzija uvijek je u ovoj projektnoj mapi.
+Nemoj koristiti programe iz stare, zasebne Arduino mape za buduće izmjene. Oni mogu ostati samo kao originalna sigurnosna kopija. Radna verzija uvijek je u ovoj projektnoj mapi.
